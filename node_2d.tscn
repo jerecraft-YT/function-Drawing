@@ -1,9 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://cjp61t22l3tpg"]
+[gd_scene load_steps=7 format=3 uid="uid://cjp61t22l3tpg"]
 
 [ext_resource type="Script" uid="uid://cbsudi636b1ok" path="res://label.gd" id="1_wtcfe"]
 [ext_resource type="Texture2D" uid="uid://bl2adwtkowny4" path="res://icon.svg" id="2_epypp"]
 [ext_resource type="Script" uid="uid://1c3ilivoab0c" path="res://sprite_2d.gd" id="3_0hol4"]
 [ext_resource type="Script" uid="uid://cvu7ogo4tggm4" path="res://draw_lines.gd" id="4_0hol4"]
+[ext_resource type="Texture2D" uid="uid://b0hfh4y1wtuki" path="res://cos_binaria.png" id="5_kdubu"]
+[ext_resource type="Script" uid="uid://bcjtr12oj0u55" path="res://line_2d.gd" id="6_d21ai"]
 
 [node name="Node2D" type="Node2D"]
 
@@ -23,6 +25,33 @@ functionOffset = Vector2(640, 360)
 lineWidth = 10
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(570, 364)
+position = Vector2(120, 194)
 texture = ExtResource("2_epypp")
 script = ExtResource("3_0hol4")
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="."]
+position = Vector2(628, 328)
+amount = 128
+emission_shape = 2
+emission_sphere_radius = 75.02
+gravity = Vector2(0, 0)
+angle_min = -60.7
+scale_amount_max = 2.0
+
+[node name="Node2D" type="Node2D" parent="."]
+visible = false
+position = Vector2(618, 328)
+
+[node name="Polygon2D" type="Polygon2D" parent="Node2D"]
+position = Vector2(10, 0)
+
+[node name="Line2D" type="Line2D" parent="Node2D" node_paths=PackedStringArray("poligono")]
+texture_filter = 1
+texture_repeat = 2
+position = Vector2(10, 0)
+closed = true
+width = 52.18
+texture = ExtResource("5_kdubu")
+texture_mode = 1
+script = ExtResource("6_d21ai")
+poligono = NodePath("../Polygon2D")
