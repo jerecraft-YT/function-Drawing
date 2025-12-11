@@ -22,8 +22,7 @@ script = ExtResource("1_wtcfe")
 [node name="drawLines" type="Node2D" parent="."]
 script = ExtResource("4_0hol4")
 functionOffset = Vector2(640, 360)
-lineWidth = 8
-spiral_type = 14
+lineWidth = 10
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(120, 194)
@@ -32,11 +31,17 @@ script = ExtResource("3_0hol4")
 
 [node name="CPUParticles2D" type="CPUParticles2D" parent="."]
 visible = false
-position = Vector2(628, 328)
+light_mask = 2
+position = Vector2(625, 350)
 amount = 128
+speed_scale = 10.0
 emission_shape = 2
 emission_sphere_radius = 75.02
 gravity = Vector2(0, 0)
+radial_accel_min = -35.0
+radial_accel_max = -35.0
+tangential_accel_min = -40.0
+tangential_accel_max = -40.0
 angle_min = -60.7
 scale_amount_max = 2.0
 

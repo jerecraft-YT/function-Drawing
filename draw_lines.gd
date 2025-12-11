@@ -10,7 +10,10 @@ var puntos:PackedVector2Array = []
 @export var lineWidth:int
 @export var numberPoints:int = 64
 @export var progressConsum:float = 1.0
-@export var diference:float
+@export var updateLines:bool = true
+@export var baseStartAMP:float = 50
+@export var baseFinalAMP:float = 200
+@export var lowDefinition:float = 4
 var funcion:String
 enum SpiralType {linear,easeInSine,easeOutSine,easeInOutSine,easeInCubic,easeOutCubic,easeInOutCubic,easeInQuint,easeOutQuint,easeInOutQuint,easeInCirc,easeOutCirc,
 	easeInOutCirc,easeInElastic,easeOutElastic,easeInOutElastic,easeInQuad,easeOutQuad,
@@ -27,21 +30,35 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 @warning_ignore("unused_parameter")
 func _process(delta: float) -> void:
-	funcion = SpiralType.keys()[spiral_type]
-	calculateSpiral()
-	queue_redraw()
-
+	if updateLines == true:
+		funcion = SpiralType.keys()[spiral_type]
+		calculateSpiral()
+		queue_redraw()
+	
+	if Input.is_action_pressed("ui_down"):
+		startAMP -= 1
+		finalAMP -= 1
+	if Input.is_action_pressed("ui_up"):
+		startAMP += 1
+		finalAMP += 1
+	#startAMP = max(startAMP,50)
+	#finalAMP = max(finalAMP,50)
 func calculateSpiral():
+	var ampToGetBase = (baseFinalAMP - baseStartAMP)
+	var ampToGet = finalAMP - startAMP
+	var angleToGet = (finalAngle - startAngle) * progressConsum
+	var sobrante = 1 - progressConsum
+	
+	numberPoints = ceil(angleToGet / max(lowDefinition,0.1))
+	progressConsum = ampToGet / ampToGetBase
+	
+	var progresoPaso = 1.0 / numberPoints
+	
 	if puntos.size() != numberPoints + 1:
 		puntos.resize(numberPoints + 1)
-	
-	var ampToGet = (finalAMP - startAMP) * progressConsum
-	var angleToGet = (finalAngle - startAngle) * progressConsum
-	var progresoPaso = 1.0 / numberPoints
-	var sobrante = 1 - progressConsum
 	for i in range(numberPoints+1):
 		var progresoActual = (i * progresoPaso)
-		var progresoFuncion = DataGame.call(funcion,sobrante + progresoActual)
+		var progresoFuncion = DataGame.call(funcion,sobrante + progresoActual * progressConsum)
 		var angleActual = deg_to_rad(finalAngle - (angleToGet * progresoFuncion))
 		var ampActual = finalAMP - (ampToGet * progresoActual)
 		puntos[i] = Vector2(
