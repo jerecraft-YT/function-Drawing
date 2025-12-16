@@ -22,7 +22,9 @@ script = ExtResource("1_wtcfe")
 [node name="drawLines" type="Node2D" parent="."]
 script = ExtResource("4_0hol4")
 functionOffset = Vector2(640, 360)
+finalAngle = 0.0
 lineWidth = 10
+specialFuntion = true
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(120, 194)

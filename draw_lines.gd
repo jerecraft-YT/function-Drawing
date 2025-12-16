@@ -14,6 +14,8 @@ var puntos:PackedVector2Array = []
 @export var baseStartAMP:float = 50
 @export var baseFinalAMP:float = 200
 @export var lowDefinition:float = 4
+@export var specialFuntion:bool = false
+@export var rotacion:float = 260
 var funcion:String
 enum SpiralType {linear,easeInSine,easeOutSine,easeInOutSine,easeInCubic,easeOutCubic,easeInOutCubic,easeInQuint,easeOutQuint,easeInOutQuint,easeInCirc,easeOutCirc,
 	easeInOutCirc,easeInElastic,easeOutElastic,easeInOutElastic,easeInQuad,easeOutQuad,
@@ -24,7 +26,7 @@ enum SpiralType {linear,easeInSine,easeOutSine,easeInOutSine,easeInCubic,easeOut
 
 func _ready() -> void:
 	funcion = SpiralType.keys()[spiral_type]
-	print(funcion)
+	#print(funcion)
 	calculateSpiral()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -43,24 +45,47 @@ func _process(delta: float) -> void:
 		finalAMP += 1
 	#startAMP = max(startAMP,50)
 	#finalAMP = max(finalAMP,50)
+@export var ripple_amplitude: float = 10.0
+@export var ripple_frequency: float = 10.0
+@export var ripple_start_smooth: float = 0.1  # Porcentaje del inicio donde comienza la ondulación
+@export var ripple_end_smooth: float = 0.9    # Porcentaje del final donde termina la ondulación
+
 func calculateSpiral():
 	var ampToGetBase = (baseFinalAMP - baseStartAMP)
 	var ampToGet = finalAMP - startAMP
 	var angleToGet = (finalAngle - startAngle) * progressConsum
 	var sobrante = 1 - progressConsum
 	
-	numberPoints = ceil(angleToGet / max(lowDefinition,0.1))
+	numberPoints = max(ceil(angleToGet / max(lowDefinition,0.1)),2)+1000
 	progressConsum = ampToGet / ampToGetBase
 	
 	var progresoPaso = 1.0 / numberPoints
 	
 	if puntos.size() != numberPoints + 1:
 		puntos.resize(numberPoints + 1)
+	
 	for i in range(numberPoints+1):
 		var progresoActual = (i * progresoPaso)
 		var progresoFuncion = DataGame.call(funcion,sobrante + progresoActual * progressConsum)
-		var angleActual = deg_to_rad(finalAngle - (angleToGet * progresoFuncion))
 		var ampActual = finalAMP - (ampToGet * progresoActual)
+		
+		# Ángulo base de la espiral
+		var baseAngle = finalAngle - (angleToGet * progresoFuncion)
+		
+		# Factor de suavizado con control preciso
+		var smooth_factor = 0.0
+		if progresoActual >= ripple_start_smooth and progresoActual <= ripple_end_smooth:
+			# Normalizar progreso dentro del rango de ondulación
+			var normalized_progress = (progresoActual - ripple_start_smooth) / (ripple_end_smooth - ripple_start_smooth)
+			# Curva suave de entrada y salida
+			smooth_factor = sin(normalized_progress * PI)
+		
+		# Ondulación con suavizado
+		var ripple = cos(progresoActual * ripple_frequency) * ripple_amplitude * smooth_factor
+		
+		# Ángulo final
+		var angleActual = deg_to_rad(baseAngle + ripple)
+		
 		puntos[i] = Vector2(
 			functionOffset.x + cos(angleActual) * ampActual,
 			functionOffset.y - sin(angleActual) * ampActual
