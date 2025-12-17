@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://bxdtlllwjl466"]
+
+[ext_resource type="Script" uid="uid://cvu7ogo4tggm4" path="res://draw_lines.gd" id="1_8nqu6"]
+
+[node name="drawLines" type="Node2D"]
+script = ExtResource("1_8nqu6")
+functionOffset = Vector2(640, 360)
+finalAngle = 0.0
